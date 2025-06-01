@@ -1,4 +1,4 @@
-import pandas as pd
+""" import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -22,4 +22,5 @@ df["Total"] = df[["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]].sum
 
 sns.boxplot(data=df, x="Generation", y="Total")
 plt.title("Distribuzione della potenza totale per generazione")
-plt.show()
+plt.show() """
+
