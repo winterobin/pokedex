@@ -92,7 +92,7 @@ def _(alt, dati_pokemon):
     )
 
     # Altair chart
-    chart2 = (
+    chart = (
         alt.Chart(df_stat)
         .mark_point()
         .encode(
@@ -104,7 +104,7 @@ def _(alt, dati_pokemon):
         #.properties(title=f"Statistiche di {pokemon}")
     )
 
-    chart2
+    chart
     return
 
 
