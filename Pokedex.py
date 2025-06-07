@@ -45,8 +45,9 @@ def _(df, mo):
     dropdown2 = mo.ui.dropdown.from_series(df["type2"], label="Choose the second Type", searchable=True)
 
     # Show the menu
-    mo.md(f"""Here's a quote""")
-    dropdownname, dropdownname2, dropdown1, dropdown2
+    mo.md("""Insert the first pokemon name, if you want to visualize its stats  
+    Insert both the first and second pokemon names, if you want to confront their stats  
+    Leave the name fields empty and insert type 1 and/or type 2, to visualize the family stats"""), dropdownname, dropdownname2, dropdown1, dropdown2
     return dropdown1, dropdown2, dropdownname, dropdownname2
 
 
@@ -65,6 +66,8 @@ def _(df, dropdown1, dropdown2, dropdownname, dropdownname2):
         pokemon_data = df[df["type1"] == Type1]
     if not Name and Type1 and Type2:
         pokemon_data = df[(df["type1"] == Type1) & (df["type2"] == Type2)]
+    if not Name and not Name2 and not Type1 and not Type2:
+        pokemon_data = df
     return (pokemon_data,)
 
 
@@ -90,7 +93,7 @@ def _(chosen_columns, pokemon_data):
 
 
 @app.cell
-def _(alt, mo, pokemon_data):
+def _(alt, pokemon_data):
     # Graphs
 
     stats = ["hp", "attack", "defense", "spatk", "spdef", "speed"]
@@ -108,13 +111,12 @@ def _(alt, mo, pokemon_data):
                 color=alt.Color("Stat:N", title="Pokémon", sort=["hp", "attack","defense", "spatk","spdef", "speed"]),
                 tooltip=["index:N", "Stat:N", "Value:Q"]
             )
-            #.properties(title=f"Statistiche di {pokemon}")
         )
 
     if len(pokemon_data) == 2:
         df_stat["Stat_Pokemon"] = df_stat["Stat"] + " - " + df_stat["index"]
         ordered_stats = df_stat["Stat_Pokemon"].tolist()
-    
+
         chart = (
             alt.Chart(df_stat)
             .mark_bar()
@@ -130,17 +132,18 @@ def _(alt, mo, pokemon_data):
         # Altair chart
         chart = (
             alt.Chart(df_stat)
-            .mark_point()
+            .mark_circle()
             .encode(
                 x=alt.X("Stat:N", sort=stats),
                 y=alt.Y("Value:Q").scale(domain=(0, 255)),
+                xOffset="jitter:Q",
                 color=alt.Color("Stat:N", title="Pokémon", sort=["hp", "attack","defense", "spatk","spdef", "speed"]),
                 tooltip=["index:N", "Stat:N", "Value:Q"]
-            )
-            #.properties(title=f"Statistiche di {pokemon}")
+            ).transform_calculate(jitter="sqrt(-2*log(random()))*cos(2*PI*random()) * 0.2")
+        
         )
 
-    mo.ui.altair_chart(chart)
+    chart
 
 
     return
